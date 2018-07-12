@@ -6,14 +6,26 @@
 #
 threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
 threads threads_count, threads_count
-# workers 4
 
+
+
+if ENV.fetch("RAILS_ENV") == "production"
+  puts("This is production mode")
+  workers 4
+  daemonize true
+  bind 'unix:///home/ubuntu/rails/Rails-demo/tmp/sockets/puma.sock'
+  pidfile '/home/ubuntu/rails/Rails-demo/tmp/pids/puma.pid'
+  stdout_redirect '/home/ubuntu/rails/Rails-demo/log/stdout', '/home/ubuntu/rails/Rails-demo/log/stderr', true
+else
+  puts("This is development mode")
+  port        ENV.fetch("PORT") { 3000 }
+end
 # Daemonize the server into the background. Highly suggest that
 # this be combined with "pidfile" and "stdout_redirect".
 #
 # The default is "false".
+
 #
-# daemonize
 # daemonize false
 
 # Store the pid of the server in the file at "path".
@@ -34,7 +46,7 @@ threads threads_count, threads_count
 
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
 #
-port        ENV.fetch("PORT") { 3000 }
+
 
 # Specifies the `environment` that Puma will run in.
 #
